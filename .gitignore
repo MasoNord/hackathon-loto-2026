@@ -361,3 +361,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+backend/set_env.ps1
