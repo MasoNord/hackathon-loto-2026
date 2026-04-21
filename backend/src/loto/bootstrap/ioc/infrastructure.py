@@ -1,11 +1,22 @@
 import logging
+from datetime import timedelta
+
 import redis.asyncio as aioredis
 from typing import AsyncIterator, cast
-from dishka import Provider, provide, Scope
+from dishka import Provider, provide, Scope, provide_all
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker, AsyncSession
 from loto.bootstrap.config.database import LocalDBConnectionConfig, EngineSettings
 from loto.bootstrap.config.redis import RedisConfig
+from loto.bootstrap.config.security import AuthConfig
+from loto.infrastructure.adapters.redis_auth_session import RedisAuthSessionGateway
 from loto.infrastructure.adapters.types import MainAsyncSession, MainAsyncRedisPool, MainAsyncRedisConnection
+from loto.infrastructure.auth.handlers.signup import SignUp
+from loto.infrastructure.auth.session.gateway.auth_session import AuthSessionGateway
+from loto.infrastructure.auth.session.gateway.transport import AuthSessionTransport
+from loto.infrastructure.auth.session.id_generator import StrAuthSessionIdGenerator
+from loto.infrastructure.auth.session.service import AuthSessionService
+from loto.infrastructure.auth.session.timer import UtcAuthSessionTimer
+from loto.presentation.http.auth.adapters.session_transport_cookie import CookieAuthSessionTransport
 
 logger = logging.getLogger(__name__)
 
@@ -82,9 +93,41 @@ class LocalRedisProvider(Provider):
         await redis_client.close()
         logger.debug("Local redis connection is closed...")
 
+class AuthSessionProvider(Provider):
+    scope = Scope.REQUEST
+
+    service = provide(AuthSessionService)
+
+    id_generator = provide(StrAuthSessionIdGenerator, scope=Scope.APP)
+
+    @provide(scope=Scope.APP)
+    def provider_utc_auth_session_timer(
+            self,
+            config: AuthConfig
+    ) -> UtcAuthSessionTimer:
+        return UtcAuthSessionTimer(
+            ttl_min=timedelta(minutes=config.session_ttl_min),
+            refresh_threshold=config.session_refresh_threshold
+        )
+
+    gateway = provide(RedisAuthSessionGateway, provides=AuthSessionGateway)
+    transport = provide(CookieAuthSessionTransport, provides=AuthSessionTransport)
+
+class AuthHandlerProvider(Provider):
+    scope = Scope.REQUEST
+
+    handlers = provide_all(
+        SignUp,
+        # Login,
+        # Logout,
+        # Me
+    )
+
 
 def infrastructure_providers() -> tuple[Provider, ...]:
     return (
         LocalRedisProvider(),
-        LocalDatabaseProvider()
+        LocalDatabaseProvider(),
+        AuthSessionProvider(),
+        AuthHandlerProvider()
     )

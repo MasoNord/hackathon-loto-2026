@@ -27,4 +27,4 @@ class Users(Base):
     role_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("roles.id", ondelete="SET NULL"))
 
     bank_account: Mapped["BankAccount"] = relationship(back_populates="user")
-    role: Mapped["Role"] = relationship(back_populates="user")
+    role: Mapped["Roles"] = relationship(back_populates="user")

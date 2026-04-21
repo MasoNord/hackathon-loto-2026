@@ -20,7 +20,7 @@ class BankAccount(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7()
     )
     balance: Mapped[decimal.Decimal] = mapped_column(
-        DECIMAL(5, 2)
+        DECIMAL(18, 2)
     )
 
     last_withdraw: Mapped[datetime] = mapped_column(

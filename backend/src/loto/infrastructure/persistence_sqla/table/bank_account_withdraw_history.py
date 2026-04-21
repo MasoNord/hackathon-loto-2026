@@ -23,4 +23,4 @@ class BankAccountWithdrawHistory(Base):
     balance_after: Mapped[decimal.Decimal] = mapped_column(DECIMAL, nullable=False)
     withdraw_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     bank_account_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("bank_account.id", ondelete="CASCADE"))
-    bank_account: Mapped["BankAcount"] = relationship(back_populates="bank_withdraw_histories")
+    bank_account: Mapped["BankAccount"] = relationship(back_populates="bank_withdraw_histories")
