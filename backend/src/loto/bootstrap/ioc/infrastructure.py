@@ -12,6 +12,7 @@ from loto.infrastructure.adapters.redis_auth_session import RedisAuthSessionGate
 from loto.infrastructure.adapters.types import MainAsyncSession, MainAsyncRedisPool, MainAsyncRedisConnection
 from loto.infrastructure.auth.handlers.login import Login
 from loto.infrastructure.auth.handlers.logout import Logout
+from loto.infrastructure.auth.handlers.me import Me
 from loto.infrastructure.auth.handlers.signup import SignUp
 from loto.infrastructure.auth.session.gateway.auth_session import AuthSessionGateway
 from loto.infrastructure.auth.session.gateway.transport import AuthSessionTransport
@@ -122,7 +123,7 @@ class AuthHandlerProvider(Provider):
         SignUp,
         Login,
         Logout,
-        # Me
+        Me
     )
 
 

@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 
 from loto.application.common.gateway.user_gateway import UserGateway
 from loto.domain.exceptions.user import EmailAlreadyExistsError
@@ -26,7 +27,10 @@ class SAUserGateway(UserGateway):
                 raise InfrastructureError
 
     async def get_by_id(self, user_id: UUID) -> Users | None:
-        stmt = select(Users).where(Users.id == user_id)
+        stmt = (select(Users).where(Users.id == user_id)
+                .options(selectinload(Users.bank_account))
+                .options(selectinload(Users.role))
+        )
 
         record = await self._session.execute(stmt)
 
