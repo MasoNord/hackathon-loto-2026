@@ -1,5 +1,7 @@
 import { CircleCheck, Eye, EyeOff, ImagePlus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { Me } from '../../service/APIs/Me'
+import { SpecialButton2, SpecialButton3 } from './Buttons'
 
 export const useInput = ({ value, validate, onChange, onStatusChange }) => {
 	const [internalValue, setInternalValue] = useState(value || '')
@@ -81,7 +83,7 @@ export const InputDefault = ({
 					onChange={handleChange}
 					readOnly={disabled}
 					placeholder={placeholder}
-					className='w-full rounded-2xl p-3 pr-12 bg-[var(--gray-very-lighter)] text-[var(--white)] shadow-inner transition-all focus:outline-none focus:ring-2 focus:ring-[var(--black)]'
+					className='w-full rounded-2xl p-3 pr-12 bg-[var(--gray-very-lighter)] text-[var(--white)] shadow-inner transition-all focus:outline-none focus:ring-2 focus:ring-[var(--hero)]'
 				/>
 
 				{/* Кнопка-глазик, показываем только если изначальный type='password' */}
@@ -97,6 +99,176 @@ export const InputDefault = ({
 				)}
 			</div>
 		</div>
+	)
+}
+
+export const BetInput = ({ value, onChange }) => {
+	const [balance, setBalance] = useState(0)
+	const [isLoading, setIsLoading] = useState(true) // Стейт загрузки баланса
+
+	// Шаг изменения при клике на стрелки
+	const STEP = 1
+
+	// Подгружаем баланс при монтировании
+	useEffect(() => {
+		setIsLoading(true)
+		Me()
+			.then(res => {
+				const currentBalance = res?.bank_account?.balance || 0
+				setBalance(currentBalance)
+			})
+			.catch(err => {
+				console.error('Ошибка загрузки баланса:', err)
+				// Можно добавить уведомление пользователю
+			})
+			.finally(() => {
+				setIsLoading(false) // Разблокируем в любом случае
+			})
+	}, [])
+
+	// Вспомогательная функция для безопасного обновления значения
+	const updateBetSafely = newValue => {
+		const numValue = parseFloat(newValue)
+
+		// Если ввели не число или пустоту — сбрасываем в 0
+		if (isNaN(numValue) || newValue === '') {
+			onChange({ target: { value: '' } })
+			return
+		}
+
+		// Ограничиваем балансом сверху и 0 снизу
+		const validatedValue = Math.max(0, Math.min(balance, numValue))
+
+		// Форматируем до 2 знаков после запятой, чтобы избежать проблем с плавающей точкой
+		onChange({ target: { value: validatedValue.toFixed(2) } })
+	}
+
+	// Обработчик ручного ввода
+	const handleChange = e => {
+		const val = e.target.value
+		// Разрешаем вводить цифры и одну точку
+		if (/^\d*\.?\d*$/.test(val)) {
+			// Но окончательную валидацию делаем только при потере фокуса или через updateBetSafely,
+			// чтобы разрешить пользователю стирать цифры.
+			// Здесь просто проверяем, не больше ли баланса сразу
+			if (parseFloat(val) > balance) {
+				updateBetSafely(balance)
+			} else {
+				onChange(e)
+			}
+		}
+	}
+
+	const handleMax = () => {
+		if (isLoading || balance <= 0) return
+		updateBetSafely(balance)
+	}
+
+	// Логика кастомных стрелочек
+	const handleIncrement = () => {
+		if (isLoading) return
+		const current = parseFloat(value) || 0
+		updateBetSafely(current + STEP)
+	}
+
+	const handleQuickAdd = amount => {
+		const current = parseFloat(value) || 0
+		updateBetSafely(current + amount)
+	}
+
+	const handleDecrement = () => {
+		if (isLoading) return
+		const current = parseFloat(value) || 0
+		updateBetSafely(current - STEP)
+	}
+
+	// Определяем, заблокирован ли инпут
+	const isInputDisabled = isLoading || balance <= 0
+
+	return (
+		<>
+			{/* CSS для скрытия дефолтных стрелок (Spin Buttons) */}
+			<style>{`
+                input[type=number]::-webkit-inner-spin-button, 
+                input[type=number]::-webkit-outer-spin-button { 
+                    -webkit-appearance: none; 
+                    margin: 0; 
+                }
+                input[type=number] {
+                    -moz-appearance: textfield; /* Firefox */
+                }
+            `}</style>
+
+			<div
+				className={`w-full flex flex-col gap-2 ${isLoading ? 'opacity-60 pointer-events-none' : ''} transition-opacity`}
+			>
+				<div className='flex justify-between items-center px-1'>
+					<p className='text-[14px] text-[var(--white)] opacity-70'>
+						{isLoading ? 'Загрузка баланса...' : 'Ставка'}
+					</p>
+					<button
+						onClick={handleMax}
+						disabled={isInputDisabled}
+						className='text-[12px] text-[var(--hero)] hover:underline cursor-pointer disabled:opacity-50 disabled:no-underline'
+					>
+						MAX ({Number(balance).toFixed(2)})
+					</button>
+				</div>
+
+				<div className='relative w-full flex items-center'>
+					{/* Инпут */}
+					<input
+						type='number' // Оставляем number для мобильной клавиатуры
+						value={value}
+						onChange={handleChange}
+						onBlur={() => updateBetSafely(value)} // Финальная валидация при потере фокуса
+						disabled={isInputDisabled}
+						placeholder='0.00'
+						// Добавляем pr-24, чтобы освободить место под алмаз и стрелочки
+						className='w-full rounded-2xl py-3 pl-4 pr-24 bg-[var(--gray-very-lighter)] text-[var(--white)] font-bold text-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--hero)] disabled:cursor-not-allowed'
+					/>
+
+					{/* Блок управления справа внутри инпута */}
+					<div className='absolute right-2 flex items-center gap-2'>
+						{/* Кастомные стрелочки */}
+						<div className='flex flex-col gap-0.5'>
+							<button
+								onClick={handleIncrement}
+								disabled={isInputDisabled || parseFloat(value) >= balance}
+								className='text-[var(--white)] opacity-50 hover:opacity-100 disabled:opacity-20 flex items-center justify-center h-4 w-5 bg-[var(--black)]/20 rounded-sm'
+							>
+								<span className='translate-y-[-1px]'>▲</span>{' '}
+								{/* Можно заменить на SVG */}
+							</button>
+							<button
+								onClick={handleDecrement}
+								disabled={isInputDisabled || parseFloat(value) <= 0}
+								className='text-[var(--white)] opacity-50 hover:opacity-100 disabled:opacity-20 flex items-center justify-center h-4 w-5 bg-[var(--black)]/20 rounded-sm'
+							>
+								<span className='translate-y-[-1px]'>▼</span>{' '}
+								{/* Можно заменить на SVG */}
+							</button>
+						</div>
+
+						{/* Иконка валюты */}
+						<img
+							className='h-6 w-6 pointer-events-none'
+							src='../animations/diamond.webp'
+							alt='diamond'
+						/>
+					</div>
+				</div>
+				{/* Блок кнопок +10 +100 +1000 */}
+				<div className='grid grid-cols-3 gap-2'>
+					{[10, 100, 1000].map(amount => (
+						<SpecialButton3
+							onClick={() => handleQuickAdd(amount)}
+							title={`+${amount}`}
+						/>
+					))}
+				</div>
+			</div>
+		</>
 	)
 }
 

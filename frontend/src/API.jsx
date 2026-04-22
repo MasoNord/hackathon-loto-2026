@@ -31,29 +31,10 @@ const showError = status => {
 		500: 'Сервер временно умер',
 	}
 
-	toast.error(messages[status] || `Ошибка ${status}`, {
-		id: 'api-error',
-	})
+	// toast.error(messages[status] || `Ошибка ${status}`, {
+	// 	id: 'api-error',
+	// })
 }
-
-const getCookie = name => {
-	const cookies = document.cookie ? document.cookie.split('; ') : []
-	for (let c of cookies) {
-		const [k, ...v] = c.split('=')
-		if (k === name) return decodeURIComponent(v.join('='))
-	}
-	return null
-}
-
-api.interceptors.request.use(config => {
-	const csrf = getCookie('csrftoken')
-
-	if (csrf) {
-		config.headers['X-CSRF-TOKEN'] = csrf
-	}
-
-	return config
-})
 
 api.interceptors.response.use(
 	r => r,
@@ -62,10 +43,10 @@ api.interceptors.response.use(
 			return Promise.reject(error)
 		}
 
-		if (error.response.unique_code === 'AUTHENTICATION_ERROR') {
-			window.location.href = '/authorization'
-			return Promise.reject(error)
-		}
+		// if (error.response.status === 401) {
+		// 	window.location.href = '/authorization'
+		// 	return Promise.reject(error)
+		// }
 
 		const status = error.response?.status || 500
 		showError(status)
