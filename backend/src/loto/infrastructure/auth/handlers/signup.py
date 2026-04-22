@@ -9,6 +9,7 @@ import uuid6
 from loto.application.common.gateway.bank_account_gateway import BankAccountGateway
 from loto.application.common.gateway.role_gateway import RoleGateway
 from loto.application.common.gateway.user_gateway import UserGateway
+from loto.application.common.services.avatar_generator import AvatarGenerator
 from loto.application.common.services.current_user import CurrentUserService
 from loto.application.common.uow import UoW
 from loto.application.exceptions.base import ApplicationError
@@ -25,12 +26,9 @@ DEFAULT_USER_BANK_ACCOUNT_BALANCE: Final[decimal.Decimal] = decimal.Decimal("100
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class SignUpRequest:
-    username: str | None
     password: str
     repeat_password: str
-    first_name: str
-    last_name: str
-    middle_name: str | None
+    username: str
     email: str
 
 @dataclass
@@ -45,6 +43,7 @@ class SignUp:
         user_gateway: UserGateway,
         user_role_gateway: RoleGateway,
         bank_account_gateway: BankAccountGateway,
+        avatar_generator: AvatarGenerator,
         uow: UoW,
     ):
         self._current_user_service = current_user_service
@@ -53,9 +52,10 @@ class SignUp:
         self._main_uow = uow
         self._user_role_gateway = user_role_gateway
         self._bank_account_gateway=bank_account_gateway
+        self._avatar_generator=avatar_generator
 
     async def execute(self, request_data: SignUpRequest) -> SignUpResponse:
-        logger.info("Sign up: started. Username '%s'", request_data.username)
+        logger.info("Sign up: started. Email '%s'", request_data.email)
 
         try:
             await self._current_user_service.get_current_user()
@@ -73,15 +73,17 @@ class SignUp:
             balance=DEFAULT_USER_BANK_ACCOUNT_BALANCE
         )
 
+        user_id=uuid6.uuid7()
+        avatar_generator_url = await self._avatar_generator.generate_avatar(str(user_id))
+
         user = Users(
-            id=uuid6.uuid7(),
-            first_name=request_data.first_name,
-            last_name=request_data.last_name,
-            middle_name=request_data.middle_name,
+            id=user_id,
             hashed_password=hashed_password.decode(),
             email=request_data.email,
+            username=request_data.username,
             role=user_role,
-            bank_account_id=bank_account.id
+            bank_account_id=bank_account.id,
+            avatar_url=avatar_generator_url
         )
 
         async with self._main_uow:

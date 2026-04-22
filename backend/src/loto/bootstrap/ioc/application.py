@@ -4,6 +4,7 @@ from loto.application.common.gateway.bank_account_gateway import BankAccountGate
 from loto.application.common.gateway.identity_provider import IdentityProvider
 from loto.application.common.gateway.role_gateway import RoleGateway
 from loto.application.common.gateway.user_gateway import UserGateway
+from loto.application.common.services.avatar_generator import AvatarGenerator
 from loto.application.common.services.current_user import CurrentUserService
 from loto.application.common.uow import UoW
 from loto.infrastructure.auth.idp.identity_provider import FastAPIIdentityProvider
@@ -16,7 +17,7 @@ from loto.infrastructure.persistence_sqla.uow import BaseSQLAlchemyUoW
 class ApplicationProvider(Provider):
     scope = Scope.REQUEST
 
-    services = provide_all(CurrentUserService)
+    services = provide_all(CurrentUserService, AvatarGenerator)
 
     uow = provide(BaseSQLAlchemyUoW, provides=UoW)
 

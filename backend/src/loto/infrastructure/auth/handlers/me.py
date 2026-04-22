@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from loto.domain.vo.role import Role
-from loto.infrastructure.persistence_sqla import BankAccount, Users
+from loto.infrastructure.persistence_sqla import Users
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +17,7 @@ class BankAccountRead:
 @dataclass
 class UserReadMe:
     id: UUID
-    first_name: str
-    last_name: str
-    middle_name: str
+    username: str
     email: str
     role: Role
     bank_account: BankAccountRead
@@ -29,9 +27,7 @@ class Me:
     async def execute(self, user: Users) -> UserReadMe:
         return UserReadMe(
             id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            middle_name=user.middle_name,
+            username=user.username,
             email=user.email,
             role=Role(user.role.name),
             bank_account=BankAccountRead(

@@ -10,12 +10,9 @@ from loto.infrastructure.auth.handlers.signup import SignUpResponse, SignUp, Sig
 
 
 class SingUpRequestPydantic(BaseModel):
-    username: str | None
     password: str
     repeat_password: str
-    first_name: str
-    last_name: str
-    middle_name: str | None
+    username: str
     email: str
 
 def create_sign_up_router() -> APIRouter:
@@ -32,13 +29,10 @@ def create_sign_up_router() -> APIRouter:
         interactor: FromDishka[SignUp]
     ) -> SignUpResponse:
         request_data = SignUpRequest(
-            username=request_data_pydantic.username,
             password=request_data_pydantic.password,
             repeat_password=request_data_pydantic.repeat_password,
-            first_name=request_data_pydantic.first_name,
-            last_name=request_data_pydantic.last_name,
-            middle_name=request_data_pydantic.middle_name,
-            email=request_data_pydantic.email
+            email=request_data_pydantic.email,
+            username=request_data_pydantic.username
         )
 
         return await interactor.execute(request_data)

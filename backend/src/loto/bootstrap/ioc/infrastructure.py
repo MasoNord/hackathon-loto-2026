@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessi
 from loto.bootstrap.config.database import LocalDBConnectionConfig, EngineSettings
 from loto.bootstrap.config.redis import RedisConfig
 from loto.bootstrap.config.security import AuthConfig
+from loto.infrastructure.adapters.ls_file_manager import LocalStorageFileManager
 from loto.infrastructure.adapters.redis_auth_session import RedisAuthSessionGateway
 from loto.infrastructure.adapters.types import MainAsyncSession, MainAsyncRedisPool, MainAsyncRedisConnection
 from loto.infrastructure.auth.handlers.login import Login
@@ -19,6 +20,7 @@ from loto.infrastructure.auth.session.gateway.transport import AuthSessionTransp
 from loto.infrastructure.auth.session.id_generator import StrAuthSessionIdGenerator
 from loto.infrastructure.auth.session.service import AuthSessionService
 from loto.infrastructure.auth.session.timer import UtcAuthSessionTimer
+from loto.infrastructure.storage.gateway.file_manager import FileManager
 from loto.presentation.http.auth.adapters.session_transport_cookie import CookieAuthSessionTransport
 
 logger = logging.getLogger(__name__)
@@ -126,11 +128,17 @@ class AuthHandlerProvider(Provider):
         Me
     )
 
+class StorageProvider(Provider):
+    scope = Scope.APP
+
+    file_manager = provide(LocalStorageFileManager, provides=FileManager)
+
 
 def infrastructure_providers() -> tuple[Provider, ...]:
     return (
         LocalRedisProvider(),
         LocalDatabaseProvider(),
         AuthSessionProvider(),
-        AuthHandlerProvider()
+        AuthHandlerProvider(),
+        StorageProvider()
     )
