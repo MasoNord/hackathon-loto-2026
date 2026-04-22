@@ -1,0 +1,30 @@
+:root {
+	--hero: rgb(43, 186, 243);
+}
+
+:root[data-theme='light'] {
+}
+
+:root[data-theme='dark'] {
+	--bg: #090909;
+	--white: #efefef;
+	--white-lighter: #fafafa;
+	--black: #050505;
+	--gray: #121212;
+	--gray-lighter: #181818;
+	--gray-very-lighter: #323232;
+
+	--pale-color1: #fff9ed;
+	--pale-color2: #e5fde5;
+	--pale-color3: #edfffd;
+	--pale-color4: #f2edff;
+	--pale-color5: #ffedfd;
+	--pale-color6: #ffeded;
+
+	--color1: #ffe0a1;
+	--color2: #adffa1;
+	--color3: #a1f4ff;
+	--color4: #cda1ff;
+	--color5: #ffa1d8;
+	--color6: #ff9191;
+}
