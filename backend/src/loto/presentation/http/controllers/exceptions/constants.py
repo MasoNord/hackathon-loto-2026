@@ -1,4 +1,6 @@
 from loto.application.exceptions.base import ApplicationError
+from loto.application.exceptions.room import RoomNotFoundError
+from loto.application.exceptions.room_participants import NotEnoughMoneyError
 from loto.domain.exceptions.base import DomainError
 from loto.domain.exceptions.user import UserNotFoudByEmailError, UsernameAlreadyExistsError, EmailAlreadyExistsError
 from loto.infrastructure.exceptions.auth import AuthenticationError, PasswordDoesntMatchError, AlreadyAuthenticatedError
@@ -9,8 +11,10 @@ ERROR_HTTP_CODE = {
     InfrastructureError: 500,
     DomainError: 500,
 
+    NotEnoughMoneyError: 400,
 
     UserNotFoudByEmailError: 404,
+    RoomNotFoundError: 404,
 
     AuthenticationError: 401,
     PasswordDoesntMatchError: 401,
@@ -21,6 +25,8 @@ ERROR_HTTP_CODE = {
 }
 
 ERROR_MESSAGE = {
+    NotEnoughMoneyError: "Not enough money error",
+    RoomNotFoundError: "Room not found error",
     ApplicationError: "Unhanded application error",
     InfrastructureError: "Unhanded infrastructure error",
     DomainError: "Unhanded application error",
@@ -34,6 +40,8 @@ ERROR_MESSAGE = {
 
 ERROR_CODE = {
     ApplicationError: "UNHANDLED",
+    NotEnoughMoneyError: "NOT_ENOUGH_MONEY",
+    RoomNotFoundError: "ROOM_NOT_FOUND",
     InfrastructureError: "UNHANDLED",
     DomainError: "UNHANDLED",
     PasswordDoesntMatchError: "INVALID_USER_PASSWORD",

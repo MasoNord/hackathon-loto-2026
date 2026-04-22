@@ -17,7 +17,7 @@ class RoomParticipant(Base):
     )
 
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id", ondelete="CASCADE"), nullable=False)
-    boot_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("bots.id"), nullable=True)
+    bot_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("bots.id"), nullable=True)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     is_boosted: Mapped[bool] = mapped_column(Boolean, nullable=False)

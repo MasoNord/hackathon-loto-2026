@@ -22,7 +22,7 @@ class Room(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     enter_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
-
+    room_status: Mapped[str] = mapped_column(String(25), server_default=text("'idle'"))
     boosted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("'False'"))
     type: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'dice'"))
     boost_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)

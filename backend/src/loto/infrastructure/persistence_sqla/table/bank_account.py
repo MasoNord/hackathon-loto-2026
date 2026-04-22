@@ -37,4 +37,10 @@ class BankAccount(Base):
 
         return self.balance # type: ignore
 
+    def charge_moeny(self, amount: decimal.Decimal) -> decimal.Decimal:
+        self.balance = self.balance - amount
+        self.last_withdraw = datetime.now(tz=timezone.utc)
+
+        return self.balance # type: ignore
+
 
