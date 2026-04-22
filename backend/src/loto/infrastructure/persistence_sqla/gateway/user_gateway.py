@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 
 from loto.application.common.gateway.user_gateway import UserGateway
-from loto.domain.exceptions.user import EmailAlreadyExistsError
+from loto.domain.exceptions.user import EmailAlreadyExistsError, UsernameAlreadyExistsError
 from loto.infrastructure.adapters.types import MainAsyncSession
 from loto.infrastructure.exceptions.base import InfrastructureError
 from loto.infrastructure.persistence_sqla import Users
@@ -21,8 +21,8 @@ class SAUserGateway(UserGateway):
             self._session.add(user)
             await self._session.flush((user,))
         except IntegrityError as e:
-            if "ix_users_email" in str(e):
-                raise EmailAlreadyExistsError()
+            if "ix_users_username" in str(e):
+                raise UsernameAlreadyExistsError()
             else:
                 raise InfrastructureError
 
@@ -39,10 +39,7 @@ class SAUserGateway(UserGateway):
         return result
 
     async def get_by_username(self, username: str) -> Users | None:
-        pass
-
-    async def get_by_email(self, email: str) -> Users | None:
-        stmt = select(Users).where(Users.email == email)
+        stmt = select(Users).where(Users.username == username)
 
         record = await self._session.execute(stmt)
 

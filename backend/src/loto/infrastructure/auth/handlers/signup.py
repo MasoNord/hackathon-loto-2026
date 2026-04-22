@@ -79,7 +79,7 @@ class SignUp:
             id=user_id,
             hashed_password=hashed_password.decode(),
             username=request_data.username,
-            role=user_role,
+            role_id=user_role.id,
             bank_account_id=bank_account.id,
             avatar_url=avatar_generator_url
         )
@@ -96,7 +96,7 @@ class SignUp:
             except CommitError as err:
                 raise ApplicationError from err
 
-        logger.info("Sign up: done. Username: '%s'. Username: '%s'", user.username)
+        logger.info("Sign up: done. Username: '%s'", user.username)
         return SignUpResponse(id=user.id)
 
     def _validate_password(self, password: str, repeat_password: str) -> str:

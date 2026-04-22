@@ -17,7 +17,3 @@ class UserGateway(Protocol):
     @abstractmethod
     async def get_by_username(self, username: str) -> Users | None:
         raise NotImplementedError
-
-    @abstractmethod
-    async def get_by_email(self, email: str) -> Users | None:
-        raise NotImplementedError

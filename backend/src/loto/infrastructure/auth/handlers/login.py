@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LogInRequest:
-    email: str
+    username: str
     password: str
 
 class Login:
@@ -32,7 +32,7 @@ class Login:
 
     async def execute(self, request_data: LogInRequest, request: Request):
 
-        logger.info("Log in: started. Email: '%s'", request_data.email)
+        logger.info("Log in: started. Username: '%s'", request_data.username)
 
         try:
             await self._current_user_service.get_current_user()
@@ -40,10 +40,10 @@ class Login:
         except AuthenticationError:
             pass
 
-        user = await self._user_gateway.get_by_email(request_data.email)
+        user = await self._user_gateway.get_by_username(request_data.username)
 
         if not user:
-            raise UserNotFoudByEmailError(request_data.email)
+            raise UserNotFoudByEmailError(request_data.username)
 
         if not await self._user_service.verify_password(user, request_data.password.encode()):
             raise PasswordDoesntMatchError

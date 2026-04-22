@@ -9,7 +9,7 @@ from loto.infrastructure.auth.handlers.login import LogInRequest, Login
 
 
 class LogInRequestPydantic(BaseModel):
-    email: str
+    username: str
     password: str
 
 def create_login_router() -> APIRouter:
@@ -25,5 +25,5 @@ def create_login_router() -> APIRouter:
         interactor: FromDishka[Login],
         request: Request
     ) -> None:
-        await interactor.execute(LogInRequest(email=request_data.email, password=request_data.password), request)
+        await interactor.execute(LogInRequest(username=request_data.username, password=request_data.password), request)
     return router
