@@ -52,6 +52,6 @@ class Login:
 
         logger.info(
             "Log in: done. User, ID: '%s', username '%s'",
-            user.id
+            user.id, user.username
         )
 

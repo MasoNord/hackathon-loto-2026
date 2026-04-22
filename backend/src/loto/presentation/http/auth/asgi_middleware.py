@@ -43,7 +43,10 @@ class ASGISessionMiddleware:
         cookie_params: CookieParams = getattr(
             request.state,
             REQUEST_STATE_COOKIE_PARAMS_KEY,
-            CookieParams(secure=False),
+            CookieParams(
+                secure=False,
+                samesite="none"
+            ),
         )
         if cookie_params is None:
             return
@@ -62,7 +65,8 @@ class ASGISessionMiddleware:
             logger.debug("Request state delete session key is false")
             return
 
-        cookie_params = getattr(request.state, REQUEST_STATE_COOKIE_PARAMS_KEY, CookieParams(secure=False))
+        cookie_params = getattr(request.state, REQUEST_STATE_COOKIE_PARAMS_KEY, CookieParams(secure=False,samesite="none")
+        )
 
         cookie_header = self._make_cookie_header(
             name=COOKIE_SESSION_ID_NAME,
@@ -80,7 +84,7 @@ class ASGISessionMiddleware:
         name: str,
         value: str,
         is_secure: bool = True,
-        samesite: Literal["strict"] | None = None,
+        samesite: Literal["strict", "lax", "none"] | None = None,
         max_age: int | None = None,
     ) -> str:
         cookie = SimpleCookie()

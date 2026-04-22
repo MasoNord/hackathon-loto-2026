@@ -16,4 +16,4 @@ class PresentationProvider(Provider):
 
     @provide
     def provide_cookie_params(self, security: CookiesConfig) -> CookieParams:
-        return CookieParams(secure=security.secure)
+        return CookieParams(secure=security.secure, samesite="none")

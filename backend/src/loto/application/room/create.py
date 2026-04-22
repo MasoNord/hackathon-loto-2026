@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from loto.application.common.gateway.room_gateway import RoomGateway
 from loto.application.common.uow import UoW
+from loto.domain.vo.room_type import RoomType
 from loto.infrastructure.persistence_sqla import Room, Users
 
 
@@ -16,6 +17,7 @@ class CreateRoomRequest:
     seats: int
     boosted: bool
     boost_price: int
+    type: RoomType
     prize_percentage: decimal.Decimal
 
 class CreateRoom:
@@ -36,7 +38,8 @@ class CreateRoom:
             boosted=create_request.boosted,
             boost_price=create_request.boost_price,
             prize_percentage=create_request.prize_percentage,
-            creator_id = user.id
+            creator_id = user.id,
+            type=create_request.type.value
         )
 
         async with self._main_uow:

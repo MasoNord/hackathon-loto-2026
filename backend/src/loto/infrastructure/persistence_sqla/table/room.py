@@ -23,7 +23,8 @@ class Room(Base):
     enter_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    boosted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("False"))
+    boosted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("'False'"))
+    type: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'dice'"))
     boost_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
     prize_percentage: Mapped[float] = mapped_column(DECIMAL(4, 2), nullable=False)
 

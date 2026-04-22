@@ -59,7 +59,6 @@ class RedisAuthSessionGateway(AuthSessionGateway):
         session_key = f"session:{auth_session_id}"
 
         auth_session = await self.get_by_id(auth_session_id)
-
         if not auth_session:
             return
 
@@ -67,7 +66,7 @@ class RedisAuthSessionGateway(AuthSessionGateway):
 
         try:
             await self._redis_connection.delete(session_key)
-            await self._redis_connection.delete(user_sessions_key)
+            await self._redis_connection.srem(user_sessions_key, auth_session_id)
         except RedisError as err:
             raise InfrastructureError from err
 

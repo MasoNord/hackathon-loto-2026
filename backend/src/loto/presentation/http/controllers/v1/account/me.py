@@ -12,10 +12,7 @@ from loto.infrastructure.auth.handlers.me import Me, BankAccountRead
 
 class UserReadMePydantic(BaseModel):
     id: UUID
-    first_name: str
-    last_name: str
-    middle_name: str
-    email: str
+    username: str
     role: str
     bank_account: BankAccountRead
 
@@ -44,11 +41,8 @@ def create_get_me_router() -> APIRouter:
 
         return UserReadMePydantic(
             id=me.id,
-            first_name=me.first_name,
-            last_name=me.last_name,
-            middle_name=me.middle_name,
-            email=me.email,
             role=me.role.name,
+            username=me.username,
             bank_account=me.bank_account
         )
 

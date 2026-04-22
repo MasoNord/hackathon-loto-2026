@@ -34,9 +34,9 @@ def create_web_app() -> FastAPI:
     app.add_exception_handler(InfrastructureError, infrastructure_error_handler)
     app.add_exception_handler(DomainError, domain_error_handler)
 
-    app.add_middleware(ASGISessionMiddleware)
-
     setup_cors(app)
+
+    app.add_middleware(ASGISessionMiddleware)
 
     set_media_folder(app)
 

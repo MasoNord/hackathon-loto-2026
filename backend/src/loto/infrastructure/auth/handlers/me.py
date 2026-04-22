@@ -18,17 +18,14 @@ class BankAccountRead:
 class UserReadMe:
     id: UUID
     username: str
-    email: str
     role: Role
     bank_account: BankAccountRead
-
 
 class Me:
     async def execute(self, user: Users) -> UserReadMe:
         return UserReadMe(
             id=user.id,
             username=user.username,
-            email=user.email,
             role=Role(user.role.name),
             bank_account=BankAccountRead(
                 id=user.bank_account.id,

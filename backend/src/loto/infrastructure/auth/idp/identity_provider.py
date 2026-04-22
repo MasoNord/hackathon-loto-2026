@@ -60,7 +60,7 @@ class FastAPIIdentityProvider(IdentityProvider):
         try:
             auth_session: (AuthSession | None) = await self._auth_session_gateway.get_by_id(auth_session_id)
 
-        except InfrastructureError as err:
+        except InfrastructureError:
             self._auth_session_transport.remove_current()
             raise AuthenticationError
 

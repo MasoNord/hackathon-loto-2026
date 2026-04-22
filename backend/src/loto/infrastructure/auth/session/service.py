@@ -48,6 +48,7 @@ class AuthSessionService:
         except InfrastructureError as err:
             raise AuthenticationError from err
 
+        await self.terminate_current_session()
         self._auth_session_transport.deliver(auth_session)
 
         logger.debug(
