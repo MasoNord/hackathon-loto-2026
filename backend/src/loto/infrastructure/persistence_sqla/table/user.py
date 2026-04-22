@@ -27,4 +27,7 @@ class Users(Base):
 
     bank_account: Mapped["BankAccount"] = relationship(back_populates="user")
     role: Mapped["Roles"] = relationship(back_populates="user")
-    rooms: Mapped[List["Room"]] = relationship(back_populates="rooms")
+    created_rooms = relationship(
+        "Room",
+        back_populates="creator"
+    )

@@ -19,21 +19,25 @@ class Room(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-
     enter_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
-
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
 
     boosted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("False"))
-
     boost_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
+    prize_percentage: Mapped[float] = mapped_column(DECIMAL(3, 2), nullable=False)
 
-    prize_percentage: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
+    creator_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
 
-    creator_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    creator: Mapped["Users"] = relationship(
+        "Users",
+        back_populates="created_rooms"
+    )
 
-    creator: Mapped["Users"] = relationship(backref="rooms")
-
-    room_participants: Mapped[List["RoomParticipant"]] = relationship(backref="room")
+    room_participants: Mapped[List["RoomParticipant"]] = relationship(
+        "RoomParticipant",
+        back_populates="room"
+    )

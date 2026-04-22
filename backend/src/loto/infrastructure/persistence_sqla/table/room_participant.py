@@ -24,4 +24,4 @@ class RoomParticipant(Base):
 
     reserved_balance: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18,2), nullable=False)
 
-    room: Mapped["Room"] = relationship(backref="room_participants")
+    room: Mapped["Room"] = relationship(back_populates="room_participants")
