@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import uuid
-from typing import List
 
 import uuid6
 from sqlalchemy import String, ForeignKey
@@ -16,8 +15,6 @@ class Users(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7()
     )
-
-    email: Mapped[str] = mapped_column(String(255), index=True, nullable=False, unique=True)
     username: Mapped[str] = mapped_column(String(255), index=True, nullable=False, unique=True)
 
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)

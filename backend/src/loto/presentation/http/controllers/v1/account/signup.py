@@ -13,7 +13,6 @@ class SingUpRequestPydantic(BaseModel):
     password: str
     repeat_password: str
     username: str
-    email: str
 
 def create_sign_up_router() -> APIRouter:
     router = APIRouter()
@@ -31,7 +30,6 @@ def create_sign_up_router() -> APIRouter:
         request_data = SignUpRequest(
             password=request_data_pydantic.password,
             repeat_password=request_data_pydantic.repeat_password,
-            email=request_data_pydantic.email,
             username=request_data_pydantic.username
         )
 

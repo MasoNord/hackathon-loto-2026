@@ -29,7 +29,6 @@ class SignUpRequest:
     password: str
     repeat_password: str
     username: str
-    email: str
 
 @dataclass
 class SignUpResponse:
@@ -55,7 +54,7 @@ class SignUp:
         self._avatar_generator=avatar_generator
 
     async def execute(self, request_data: SignUpRequest) -> SignUpResponse:
-        logger.info("Sign up: started. Email '%s'", request_data.email)
+        logger.info("Sign up: started. Username '%s'", request_data.username)
 
         try:
             await self._current_user_service.get_current_user()
@@ -79,7 +78,6 @@ class SignUp:
         user = Users(
             id=user_id,
             hashed_password=hashed_password.decode(),
-            email=request_data.email,
             username=request_data.username,
             role=user_role,
             bank_account_id=bank_account.id,
@@ -98,7 +96,7 @@ class SignUp:
             except CommitError as err:
                 raise ApplicationError from err
 
-        logger.info("Sign up: done. Username: '%s'. Email: '%s'", user.email)
+        logger.info("Sign up: done. Username: '%s'. Username: '%s'", user.username)
         return SignUpResponse(id=user.id)
 
     def _validate_password(self, password: str, repeat_password: str) -> str:

@@ -25,7 +25,7 @@ class Room(Base):
 
     boosted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("False"))
     boost_price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(18, 2), nullable=False)
-    prize_percentage: Mapped[float] = mapped_column(DECIMAL(3, 2), nullable=False)
+    prize_percentage: Mapped[float] = mapped_column(DECIMAL(4, 2), nullable=False)
 
     creator_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),

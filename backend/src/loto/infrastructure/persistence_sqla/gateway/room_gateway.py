@@ -1,3 +1,6 @@
+from typing import List
+
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 from loto.application.common.gateway.room_gateway import RoomGateway
@@ -16,3 +19,15 @@ class SARoomGateway(RoomGateway):
             await self._session.flush((room,))
         except SQLAlchemyError:
             raise InfrastructureError
+
+    async def get_all(self) -> List[Room]:
+        try:
+            stmt = select(Room)
+            records = await self._session.execute(stmt)
+            result = records.scalars().all()
+        except SQLAlchemyError:
+            raise InfrastructureError
+
+        return list(result)
+
+
