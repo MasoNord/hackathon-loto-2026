@@ -26,3 +26,18 @@ class ReadRooms:
 
         return rooms
 
+class ReadRoomByID:
+
+    def __init__(self, room_gateway: RoomGateway):
+        self._room_gateway = room_gateway
+
+    async def execute(self, room_id: int, user: Users) -> Room:
+        logger.info("Get room started: User ID: %s Room ID: %s", user.id, room_id)
+
+        rooms = await self._room_gateway.get_by_id()
+
+        logger.info("Get rooms ended: User ID: %s", user.id)
+
+        return rooms
+
+

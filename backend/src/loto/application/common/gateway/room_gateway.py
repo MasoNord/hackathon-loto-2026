@@ -13,3 +13,7 @@ class RoomGateway(Protocol):
     @abstractmethod
     async def get_all(self) -> List[Room]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_by_id(self, room_id: int) -> Room | None:
+        raise NotImplementedError

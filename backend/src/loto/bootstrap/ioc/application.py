@@ -10,7 +10,7 @@ from loto.application.common.services.avatar_generator import AvatarGenerator
 from loto.application.common.services.current_user import CurrentUserService
 from loto.application.common.uow import UoW
 from loto.application.room.create import CreateRoom
-from loto.application.room.read import ReadRooms
+from loto.application.room.read import ReadRooms, ReadRoomByID
 from loto.application.user.balance.withdraw import BankAccountWithDraw
 from loto.infrastructure.auth.idp.identity_provider import FastAPIIdentityProvider
 from loto.infrastructure.persistence_sqla.gateway.bank_account_gateway import SABankAccountGateway
@@ -45,5 +45,6 @@ class ApplicationProvider(Provider):
     use_cases = provide_all(
         CreateRoom,
         ReadRooms,
-        BankAccountWithDraw
+        BankAccountWithDraw,
+        ReadRoomByID
     )

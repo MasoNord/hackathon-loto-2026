@@ -30,4 +30,15 @@ class SARoomGateway(RoomGateway):
 
         return list(result)
 
+    async def get_by_id(self, room_id: int) -> Room | None:
+        stmt = select(Room).filter_by(id = room_id)
+
+        try:
+            record = await self._session.execute(stmt)
+            result = record.scalar_one_or_none()
+        except SQLAlchemyError as e:
+            raise InfrastructureError from e
+
+        return result
+
 
