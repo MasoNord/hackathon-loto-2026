@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import uuid
+from typing import List
 
 import uuid6
 from sqlalchemy import String, ForeignKey
@@ -26,3 +27,4 @@ class Users(Base):
 
     bank_account: Mapped["BankAccount"] = relationship(back_populates="user")
     role: Mapped["Roles"] = relationship(back_populates="user")
+    rooms: Mapped[List["Room"]] = relationship(back_populates="rooms")
