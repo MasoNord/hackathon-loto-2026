@@ -5,7 +5,7 @@ from loto.presentation.http.controllers.v1.room.read import create_read_rooms
 
 
 def create_room_router() -> APIRouter:
-    router = APIRouter(prefix="/room")
+    router = APIRouter(prefix="/room", tags=["Room specific"])
 
     router.include_router(create_add_room())
     router.include_router(create_read_rooms())

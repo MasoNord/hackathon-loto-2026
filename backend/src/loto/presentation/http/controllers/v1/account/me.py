@@ -14,6 +14,7 @@ class UserReadMePydantic(BaseModel):
     id: UUID
     username: str
     role: str
+    avatar: str
     bank_account: BankAccountRead
 
     class Config:
@@ -43,6 +44,7 @@ def create_get_me_router() -> APIRouter:
             id=me.id,
             role=me.role.name,
             username=me.username,
+            avatar=me.avatar,
             bank_account=me.bank_account
         )
 

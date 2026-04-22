@@ -13,6 +13,7 @@ from loto.presentation.http.auth.setup_cors import setup_cors
 from loto.presentation.http.controllers.exceptions.handler import app_error_handler, infrastructure_error_handler, \
     domain_error_handler
 from loto.presentation.http.controllers.root_router import create_root_router
+from loto.presentation.websockets.controllers.router import create_websocket
 
 
 def create_ioc_container(
@@ -28,6 +29,7 @@ def create_web_app() -> FastAPI:
         lifespan=lifespan
     )
 
+    create_websocket(app)
     app.include_router(create_root_router())
 
     app.add_exception_handler(ApplicationError, app_error_handler)

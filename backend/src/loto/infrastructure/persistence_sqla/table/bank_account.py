@@ -1,7 +1,7 @@
 import decimal
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 import uuid6
@@ -30,3 +30,11 @@ class BankAccount(Base):
     user: Mapped["Users"] = relationship(back_populates="bank_account")
 
     bank_withdraw_histories: Mapped[List["BankAccountWithdrawHistory"]] = relationship(back_populates="bank_account")
+
+    def withdraw_money(self, amount: decimal.Decimal) -> decimal.Decimal:
+        self.balance = self.balance + amount
+        self.last_withdraw = datetime.now(tz=timezone.utc)
+
+        return self.balance # type: ignore
+
+

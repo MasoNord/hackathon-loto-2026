@@ -17,6 +17,10 @@ class ASGISessionMiddleware:
         self.app = app
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] == "websocket":
+            logger.info("Request websocket connection")
+            return await self.app(scope, receive, send)
+
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
 
