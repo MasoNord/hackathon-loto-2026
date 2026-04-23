@@ -3,8 +3,8 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import inject
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
+from loto.presentation.websockets.connections.gateway.connection_manager import ConnectionManager
 
-from loto.presentation.websockets.connections.connection_manager import ConnectionManager
 
 def create_websocket(app: FastAPI):
 
@@ -40,6 +40,3 @@ def create_websocket(app: FastAPI):
 
             if room_id:
                 await connection_manager.broadcast_room_state(room_id)
-
-
-            pass
